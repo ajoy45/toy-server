@@ -68,6 +68,25 @@ async function run() {
     const result= await toyCollection.find(query).toArray();
     res.send(result)
   })
+  // update toy
+  app.put('/updateToy/:id',async(req,res)=>{
+    const id=req.params.id;
+    console.log(id)
+    const filter = {_id:new ObjectId(id)};
+    const options = { upsert: true };
+    const updateToy=req.body;
+    console.log(updateToy)
+    const updateDoc = {
+      $set: {
+        price:updateToy.price,
+        number:updateToy.number,
+        description:updateToy.description
+      }
+    }
+    const result=await toyCollection.updateOne(filter,updateDoc,options);
+    res.send(result)
+  })
+  
     console.log('mongodb connected')
   } finally {
     
