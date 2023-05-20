@@ -1,5 +1,5 @@
 const express = require('express')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config()
 const app = express()
@@ -22,9 +22,53 @@ const client = new MongoClient(uri, {
 });
 
 async function run() {
+  const toyCollection=client.db('products').collection('toys');
   try {
     await client.connect();
-    
+// post data
+    app.post('/add-Toy',async(req,res)=>{
+      const data=req.body;
+      const result = await toyCollection.insertOne(data);
+      res.send(result)
+    })
+  //  get all data
+    app.get('/allToy',async(req,res)=>{
+      const result= await toyCollection.find().limit(20).toArray();
+      res.send(result)
+    })
+  //  get data by name
+  app.get('/allToyBySearch/:searchText',async(req,res)=>{
+    const SearchText=req.params.searchText;
+    const result= await toyCollection.find({
+      $or:[
+        {name:{$regex:SearchText,$options:"i"}}
+      ]
+    }).toArray();
+    res.send(result)
+  })
+  // get data by id
+  app.get('/allToy/:id',async(req,res)=>{
+    const id=req.params.id;
+    const query={_id:new ObjectId(id)}
+    const result=await toyCollection.findOne(query);
+    res.send(result)
+  })
+  // get data by category
+  app.get('/toyCategory/:text',async(req,res)=>{
+    const text=req.params.text
+    const query={category:text}
+    const result= await toyCollection.find(query).toArray();
+    res.send(result)
+  })
+  // get data by email
+  app.get('/myToy/',async(req,res)=>{
+    const email=req.query.email;
+    console.log(email)
+    const query={Seller_email:email};
+    const result= await toyCollection.find(query).toArray();
+    res.send(result)
+  })
+    console.log('mongodb connected')
   } finally {
     
     // await client.close();
