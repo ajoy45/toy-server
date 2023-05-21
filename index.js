@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 async function run() {
   const toyCollection=client.db('products').collection('toys');
   try {
-    await client.connect();
+    // await client.connect();
 // post data
     app.post('/add-Toy',async(req,res)=>{
       const data=req.body;
@@ -61,7 +61,7 @@ async function run() {
     res.send(result)
   })
   // get data by email
-  app.get('/myToy/',async(req,res)=>{
+  app.get('/myToy',async(req,res)=>{
     const email=req.query.email;
     console.log(email)
     const query={Seller_email:email};
