@@ -65,7 +65,7 @@ async function run() {
     const email=req.query.email;
     console.log(email)
     const query={Seller_email:email};
-    const result= await toyCollection.find(query).toArray();
+    const result= await toyCollection.find(query).sort({price:1}).toArray();
     res.send(result)
   })
   // update toy
@@ -86,7 +86,12 @@ async function run() {
     const result=await toyCollection.updateOne(filter,updateDoc,options);
     res.send(result)
   })
-  
+  app.delete('/deleteToy/:id',async(req,res)=>{
+    const id=req.params.id;
+    const query={_id:new ObjectId(id)};
+    const result=await toyCollection.deleteOne(query);
+    res.send(result)
+  })
     console.log('mongodb connected')
   } finally {
     
